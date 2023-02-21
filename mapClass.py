@@ -15,6 +15,6 @@ class mapping:
         con = sqlite3.connect("orders.db")
         cur = con.cursor()
         
-        cur.execute("INSERT INTO orders (route) VALUES (?) WHERE tracking IS ?;",([route1,route2,route3],tracker))
+        cur.execute("UPDATE orders SET route = ? WHERE tracking IS ?;",([route1,route2,route3],tracker))
         con.commit()
         cur.close()
