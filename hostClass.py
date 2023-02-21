@@ -1,4 +1,5 @@
 import sqlite3
+from mapClass import mapping
 class host:
     def __init__(self,orderlist):
         order = list(orderlist.values())
@@ -15,25 +16,22 @@ class host:
         con = sqlite3.connect("orders.db")
         cur = con.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS orders(name,address,phone,topping,slices,tracking NOT NULL PRIMARY KEY,route)")
-        cur.execute("INSERT INTO orders (name,address,phone,topping,slices,tracking) values (?,?,?,?,?,?);",self.name,self.address,self.phone,self.topping,self.slices,self.tracking)
+        cur.execute("INSERT INTO orders (name,address,phone,topping,slices,tracking) values (?,?,?,?,?,?);",(self.name,self.address,self.phone,self.topping,self.slices,self.tracking))
         con.commit()
         cur.close()
-    
-    def mapRoute(self):
-        route1 = []
-        route2 = []
-        route3 = []
-        #the function will fill these lists with all of the street names in the 3 fastest routes if there are 3 routes otherwise leave some of the lists empty
-        
-        #insert google maps code to get the routes
-        
-        #put the a list of the routes into db
+        mapping.mapRoute(self.tracking,self.address)
+
+
+    def sendRoute(self,ids):
         con = sqlite3.connect("orders.db")
         cur = con.cursor()
-        
-        cur.execute("INSERT INTO orders (route) VALUES (?);",[route1,route2,route3])
-        con.commit()
+        routelist = []
+        for i in ids:        
+            cur.execute("SELECT FROM orders values WHERE id IS ?",(i))
+            routelist.append(cur.fetchall)
         cur.close()
+        com.sendToDriver(routelist)
+
     def chooseOrders(self):
         #this will take the route
         con = sqlite3.connect("orders.db")
@@ -53,6 +51,7 @@ class host:
         
         common_streets = {}
         #check dictionary for most used roads and make groups each group will be a list in common routes
+        
         for info in common_routes:
             total_slices = 0
             ids = []
@@ -60,6 +59,32 @@ class host:
                 total_slices += i[1]
                 ids.append(i[0])
             common_streets[info] = [total_slices,ids]
+        
+        index = 0 #place holder    
+        for info in common_streets:
+            if total_slices == 8:
+                self.sendRoute()
+                common_streets.pop(index)
+            elif total_slices < 8:
+                self.mergeGroups(info)
+            else:
+                self.splitGroup(info)
+            index +=1
+    #takes in a list containing ids that go through a road and finds the best group to merge it with
+    def mergeGroups(self,info):
+        try:
+            groups.append(info)
+        except:
+            groups = []
+    #takes in same as mergeGroup function but splits group
+    def splitGroup(self,info):
+        pass 
+
+                
+
+                
+            
+
             
             
             
