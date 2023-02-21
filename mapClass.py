@@ -1,6 +1,6 @@
 class mapping:
     def __init__(self,address,tracker):
-        self.adress = address
+        self.address = address
         self.tracker = tracker
 
     def mapRoute(self,tracker,address):
