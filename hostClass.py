@@ -12,7 +12,7 @@ class host:
         self.slices = self.order[4]
         self.tracking = self.order[5]
     #takes in list values and puts them into db    
-    def commitToDB(self):
+
         con = sqlite3.connect("orders.db")
         cur = con.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS orders(name,address,phone,topping,slices,tracking NOT NULL PRIMARY KEY,route)")
@@ -21,7 +21,13 @@ class host:
         cur.close()
         mapping.mapRoute(self.tracking,self.address)
 
-
+    def sendDBToDriver(self):
+        con = sqlite3.connect("orders.db")
+        cur = con.cursor()
+        cur.execute("SELECT * FROM orders;")
+        return(cur.fetchall)
+        cur.close()
+    
     def sendRoute(self,ids):
         con = sqlite3.connect("orders.db")
         cur = con.cursor()
